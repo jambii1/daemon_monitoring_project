@@ -4,12 +4,11 @@
 #include <httplib.h>
 #include <memory>
 #include "client-config.hpp"
-#include "ui.hpp"
 
 class Client
 {
 public:
-  Client(const ClientConfig & config, std::unique_ptr< UI > ui);
+  explicit Client(const ClientConfig & config);
 
   Client(const Client &) = delete;
   Client(Client &&) = delete;
@@ -18,18 +17,18 @@ public:
   Client & operator=(const Client &) = delete;
   Client & operator=(Client &&) = delete;
 
-  void run();
   const ClientConfig & getConfig() const noexcept;
   void updateConfig(const std::string & config_path);
-  std::string getTimeMetric(const std::string & server_name, const std::string & timestamp) const;
+  void ping();
+  std::string getTimeMetric(const std::string & server_name, const std::string & timestamp);
   std::string getIntervalMetrics(
-      const std::string & server_name, const std::string & begin_timestamp, const std::string & end_timestamp) const;
+      const std::string & server_name, const std::string & begin_timestamp, const std::string & end_timestamp);
 
 protected:
   ClientConfig config_;
-  std::unique_ptr< UI > ui_;
+  httplib::Client client_;
 
-  std::string get(const std::string & query) const;
+  std::string get(const std::string & query);
 };
 
 #endif
